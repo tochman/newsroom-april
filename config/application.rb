@@ -33,5 +33,8 @@ module NewsroomApril
 
     config.i18n.available_locales = [:sv, :en]
     config.i18n.default_locale = :en
+# temp solution for manual testing 
+# latitude: "57.10", longitude: "11.90"
+    config.fake_location = {latitude: 57.10, longitude: 11.90}
   end
 end

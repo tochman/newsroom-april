@@ -5,10 +5,75 @@
     = csp_meta_tag
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
-    - if Rails.env.test? && Rails.application.config.try(:fake_location)
-      = tag.meta id: :fake_location, content: Rails.application.config.fake_location
-  %body
+    - if Rails.env.development? && Rails.application.config.try(:fake_location)
+      = tag.meta id: 'fake-location', content: Rails.application.config.fake_location.to_json
+  %body{data: {env: Rails.env, geocoded: @geocoded}}
     = render 'layouts/navbar'
+    %p= "You are viewing the #{@edition}"
     %p= notice
     %p= alert
     = yield
+
+:javascript
+  document.addEventListener("turbolinks:load", function (){
+    
+    // Get the location of the user
+        // The view know that we know the location 
+            // Fetch the page again and have server give us the right edition
+
+
+    getPosition().then(function(position){
+      setCookie('geocoderLocation', JSON.stringify(position.coords)).then(function(){
+        reloadPage();
+        document.body.dataset.geocoded = 'true';
+      })
+      
+      console.log(position.coords);
+    })
+
+
+
+  })
+
+  getPosition = function() {
+    if (document.body.dataset.env === 'development') {
+      return new Promise(function (resolve){
+        let fakePosition = JSON.parse(document.getElementById('fake-location').content);
+        resolve({
+          coords: {
+            latitude: fakePosition.latitude,
+            longitude: fakePosition.longitude
+          }
+        });
+      })
+    } else {
+      return new Promise(function (resolve, reject){
+      navigator.geolocation.getCurrentPosition(function(position){
+        return resolve(position);
+      }, function(error){
+        return reject(error);
+      })
+    })
+    }
+    
+  }
+
+  reloadPage = function() {
+    let url = new URL(window.location.href);
+    if (document.body.dataset.geocoded !== 'true') {
+      window.location.replace(url)
+    }
+  }
+
+  function setCookie(name, value) {
+    var days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 7;
+    var path = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : '/';
+
+    return new Promise(function (resolve) {
+        var expires = new Date(Date.now() + days * 864e5).toUTCString();
+        document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path;
+        resolve();
+    });
+  } 
+
+  
