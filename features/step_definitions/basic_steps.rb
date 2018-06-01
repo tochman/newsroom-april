@@ -59,3 +59,7 @@ When("I visit {string} edit page") do |article_title|
   article = Article.find_by(headline: article_title)
   visit edit_article_path(article)
 end
+
+Given("I am at latitude: {string}, longitude: {string}") do |lat, lng|
+  Rails.application.config.fake_location = {latitude: lat, longitude: lng}
+end

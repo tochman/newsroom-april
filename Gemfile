@@ -14,6 +14,7 @@ gem 'haml-rails', '~> 1.0'
 gem 'devise'
 gem 'pundit'
 gem 'rails-i18n'
+gem 'geocoder'
 
 group :development, :test do
   gem 'coveralls', require: false

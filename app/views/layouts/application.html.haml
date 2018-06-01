@@ -5,6 +5,8 @@
     = csp_meta_tag
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    - if Rails.env.test?
+      = tag.meta id: :fake_position, content: Rails.application.config.fake_location
   %body
     = render 'layouts/navbar'
     %p= notice

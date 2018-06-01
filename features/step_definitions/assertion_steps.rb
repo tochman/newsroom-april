@@ -19,3 +19,7 @@ end
 Given("I should be redirected to login page") do
   expect(page).to have_current_path(new_user_session_path(locale: 'en'))
 end
+
+Then("show me the page") do
+  save_and_open_page
+end
