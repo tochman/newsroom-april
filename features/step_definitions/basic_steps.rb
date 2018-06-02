@@ -64,10 +64,6 @@ Given("I am at latitude: {string}, longitude: {string}") do |lat, lng|
   Rails.application.config.fake_location = {latitude: lat, longitude: lng}
 end
 
-Given("I wait fo {string} seconds") do |sec|
-  sleep sec.to_i
-end
-
 Then("I should see the button {string}") do |string|
   expect(page).to have_selector('a', text: string)
 end
