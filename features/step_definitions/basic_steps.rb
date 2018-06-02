@@ -67,3 +67,11 @@ end
 Given("I wait fo {string} seconds") do |sec|
   sleep sec.to_i
 end
+
+Then("I should see the button {string}") do |string|
+  expect(page).to have_selector('a', text: string)
+end
+
+Then("I should not see the button {string}") do |string|
+  expect(page).not_to have_selector('a', text: string)
+end

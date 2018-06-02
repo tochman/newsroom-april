@@ -19,7 +19,7 @@ Background:
 Scenario: Subscriber can Not see edit button
   Given I am signed in as "subscriber@test.com"
   And I am on the "The Awesome Article" page
-  Then I should not see "Edit"
+  Then I should not see the button "Edit"
 
 Scenario: Subscriber can Not edit articles by visiting the edit path
   Given I am signed in as "subscriber@test.com"
@@ -39,7 +39,7 @@ Scenario: Journalist can edit his/hers own article and it goes for approval
 Scenario: Journalist can Not edit other journalist's articles
   Given I am signed in as "journalist_1@test.com"
   And I am on the "The Second Article" page
-  Then I should not see "Edit"
+  Then I should not see the button "Edit"
 
 Scenario: Journalist can Not edit other journalist's articles by visiting the edit path
   Given I am signed in as "journalist_1@test.com"
