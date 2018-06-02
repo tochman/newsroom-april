@@ -5,11 +5,12 @@
     = csp_meta_tag
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
-    - if Rails.env.development? && Rails.application.config.try(:fake_location)
+    - if Rails.env.test? && Rails.application.config.try(:fake_location)
       = tag.meta id: 'fake-location', content: Rails.application.config.fake_location.to_json
   %body{data: {env: Rails.env, geocoded: @geocoded}}
     = render 'layouts/navbar'
     %p= "You are viewing the #{@edition}"
+    %button{onClick: 'clearCookieAndRefresh("geocoderLocation")'} Clear Edition
     %p= notice
     %p= alert
     = yield
@@ -21,22 +22,22 @@
         // The view know that we know the location 
             // Fetch the page again and have server give us the right edition
 
-
-    getPosition().then(function(position){
-      setCookie('geocoderLocation', JSON.stringify(position.coords)).then(function(){
-        reloadPage();
-        document.body.dataset.geocoded = 'true';
+    const locationCookie = getCookie('geocoderLocation');
+    if (locationCookie == null) {
+      getPosition().then(function(position){
+        let locationValueForCookieStorage = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        };
+        setCookie('geocoderLocation', JSON.stringify(locationValueForCookieStorage)).then(function(){
+          reloadPage();
+        })  
       })
-      
-      console.log(position.coords);
-    })
-
-
-
+    }
   })
 
   getPosition = function() {
-    if (document.body.dataset.env === 'development') {
+    if (document.body.dataset.env === 'test') {
       return new Promise(function (resolve){
         let fakePosition = JSON.parse(document.getElementById('fake-location').content);
         resolve({
@@ -75,5 +76,19 @@
         resolve();
     });
   } 
+
+  function getCookie(name) {
+    var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : null;
+  }
+
+  function deleteCookie(name) { setCookie(name, '', -1); }
+
+  clearCookieAndRefresh = function(name) {
+    //debugger;
+    deleteCookie(name);
+    document.body.dataset.geocoded = 'false';
+    reloadPage();
+  }
 
   

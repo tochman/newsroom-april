@@ -2,11 +2,8 @@ class ArticlesController < ApplicationController
   before_action :authenticate_user!, except: [:index]
   before_action :load_categories, except: [:show]
 
-  def index
-    #binding.pry
-    
+  def index    
     @geocoded = cookies['geocoderLocation'].present? ? 'true' : 'false'
-    @edition = set_edition
     @articles = Article.where(published:true)
   end
 
@@ -82,19 +79,6 @@ class ArticlesController < ApplicationController
     end
   end
 
-  def set_edition 
-    binding.pry
-    if cookies['geocoderLocation'].present? 
-      position_coords = JSON.parse(cookies['geocoderLocation'])
-      position = Geocoder.search("#{position_coords['latitude']},#{position_coords['longitude']}")
-      # Add a conditional for where the visitor is comin from
-      if position.near([59.224443,18.198229], 100)
-        "Stockholm Edition"
-      else
-        "Rest of Sweden"
-      end
-    else
-      "Rest of Sweden"
-    end
-  end
+
+
 end
